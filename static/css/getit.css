@@ -1,0 +1,14 @@
+body {
+  background-color: #d1fcfd;
+  font-family: Arial, sans-serif;
+}
+body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+img {
+  width: 18rem;
+  height: auto;
+}
