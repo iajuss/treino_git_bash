@@ -1,13 +1,20 @@
-import json
+import sqlite3
 
 def load_data(filename):
+    criar_tabela()
 
-    path = "static/data/" + filename
+    conexao = sqlite3.connect("banco.db")
+    cursor = conexao.cursor()
 
-    with open(path, "r", encoding="utf-8") as arquivo:
-        dados = json.load(arquivo)
+    cursor.execute("SELECT title, content FROM note")
+    notes = cursor.fetchall()
 
-    return dados
+    conexao.close()
+
+    return [
+        {"titulo": title, "detalhes": content}
+        for title, content in notes
+    ]
 
 def load_template(filename):
     path = 'static/templates/' + filename
@@ -18,13 +25,31 @@ def load_template(filename):
     return template
 
 def adicionar_anotacao(anotacao):
-    try:
-        with open("static/data/notes.json", "r", encoding="utf-8") as arquivo:
-            notes = json.load(arquivo)
-    except (FileNotFoundError, json.JSONDecodeError):
-        notes = []
+    criar_tabela()
 
-    notes.append(anotacao)
+    conexao = sqlite3.connect("banco.db")
+    cursor = conexao.cursor()
 
-    with open("static/data/notes.json", "w", encoding="utf-8") as arquivo:
-        json.dump(notes, arquivo, ensure_ascii=False, indent=4)
+    cursor.execute(
+        "INSERT INTO note (title, content) VALUES (?, ?)",
+        (anotacao["titulo"], anotacao["detalhes"])
+    )
+
+    conexao.commit()
+    conexao.close()
+
+def criar_tabela():
+    conexao = sqlite3.connect("banco.db")
+    cursor = conexao.cursor()
+
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS note (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title TEXT NOT NULL,
+        content TEXT NOT NULL
+    )
+""")
+    conexao.commit()
+    conexao.close()
+
+
