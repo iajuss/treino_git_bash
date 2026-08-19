@@ -1,19 +1,19 @@
 import sqlite3
 
-def load_data(filename):
+def load_data():
     criar_tabela()
 
     conexao = sqlite3.connect("banco.db")
     cursor = conexao.cursor()
 
-    cursor.execute("SELECT title, content FROM note")
+    cursor.execute("SELECT title, content, id FROM note")
     notes = cursor.fetchall()
 
     conexao.close()
 
     return [
-        {"titulo": title, "detalhes": content}
-        for title, content in notes
+        {"titulo": title, "detalhes": content, "id":id}
+        for title, content, id in notes
     ]
 
 def load_template(filename):
@@ -31,8 +31,8 @@ def adicionar_anotacao(anotacao):
     cursor = conexao.cursor()
 
     cursor.execute(
-        "INSERT INTO note (title, content) VALUES (?, ?)",
-        (anotacao["titulo"], anotacao["detalhes"])
+        "INSERT INTO note (title, content, id) VALUES (?, ?, ?)",
+        (anotacao["titulo"], anotacao["detalhes"], anotacao["id"])
     )
 
     conexao.commit()

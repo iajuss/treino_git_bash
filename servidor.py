@@ -1,5 +1,6 @@
 from flask import Flask, render_template_string, request, redirect
 import views
+import sqlite3
 
 
 app = Flask(__name__)
@@ -20,5 +21,22 @@ def submit_form():
     views.submit(titulo, detalhes)
     return redirect('/')
 
+@app.route('/delete/<int:id>', methods=['GET'])
+def delete(id):
+
+    conexao = sqlite3.connect("banco.db")
+    cursor = conexao.cursor()
+
+    cursor.execute(f"DELETE FROM note WHERE id={id}")
+
+    conexao.commit()
+    cursor.close()
+    return redirect('/')
+
+
+    
+
+
 if __name__ == '__main__':
     app.run(debug=True)
+
