@@ -31,8 +31,8 @@ def adicionar_anotacao(anotacao):
     cursor = conexao.cursor()
 
     cursor.execute(
-        "INSERT INTO note (title, content, id) VALUES (?, ?, ?)",
-        (anotacao["titulo"], anotacao["detalhes"], anotacao["id"])
+        "INSERT INTO note (title, content) VALUES (?, ?)",
+        (anotacao["titulo"], anotacao["detalhes"])
     )
 
     conexao.commit()
