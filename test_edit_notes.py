@@ -63,7 +63,7 @@ class EditNotesTest(unittest.TestCase):
         self.assertIn('name="id" value="1"', page)
         self.assertIn('name="titulo" value="Título original"', page)
         self.assertIn('name="detalhes" value="Detalhes originais"', page)
-        self.assertIn('value="Salvar"', page)
+        self.assertIn('<button type="submit">Salvar</button>', page)
         self.assertIn('>Cancelar<', page)
         self.assertIn('name="edit_cancel"', page)
 
