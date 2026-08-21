@@ -1,4 +1,11 @@
-from utils import load_data, load_template, adicionar_anotacao
+from utils import (
+    adicionar_anotacao,
+    apagar_anotacao,
+    atualizar_anotacao,
+    buscar_anotacao,
+    load_data,
+    load_template,
+)
 
 def index():
     note_template = load_template('components/note.html')
@@ -18,3 +25,20 @@ def submit(titulo, detalhes):
     }
 
     adicionar_anotacao(params)
+
+def delete(id):
+    apagar_anotacao(id)
+
+def edit(id):
+    note = buscar_anotacao(id)
+    if note is None:
+        return None
+
+    return load_template('edit.html').format(
+        id=note['id'],
+        title=note['titulo'],
+        details=note['detalhes'],
+    )
+
+def update(id, titulo, detalhes):
+    atualizar_anotacao(id, titulo, detalhes)
