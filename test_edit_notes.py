@@ -83,6 +83,41 @@ class EditNotesTest(unittest.TestCase):
         connection.close()
         self.assertEqual(note, ("Título alterado", "Detalhes alterados"))
 
+    def test_favorite_toggle_updates_the_card_and_order(self):
+        connection = sqlite3.connect("banco.db")
+        connection.execute(
+            "INSERT INTO note (title, content) VALUES (?, ?)",
+            ("Segunda nota", "Detalhes da segunda nota"),
+        )
+        connection.commit()
+        connection.close()
+
+        response = self.client.get("/favorite/1")
+        self.assertEqual(response.status_code, 302)
+
+        connection = sqlite3.connect("banco.db")
+        favorite = connection.execute(
+            "SELECT favorite FROM note WHERE id = 1"
+        ).fetchone()
+        connection.close()
+        self.assertEqual(favorite, (1,))
+
+        page = self.client.get("/").get_data(as_text=True)
+        self.assertIn('class="card"', page)
+        self.assertIn('name="favorite_button"', page)
+        self.assertIn("★", page)
+        self.assertLess(page.index("Título original"), page.index("Segunda nota"))
+
+        response = self.client.get("/favorite/1")
+        self.assertEqual(response.status_code, 302)
+
+        connection = sqlite3.connect("banco.db")
+        favorite = connection.execute(
+            "SELECT favorite FROM note WHERE id = 1"
+        ).fetchone()
+        connection.close()
+        self.assertEqual(favorite, (0,))
+
 
 if __name__ == "__main__":
     unittest.main()

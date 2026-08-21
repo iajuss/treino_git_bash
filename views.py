@@ -1,5 +1,6 @@
 from utils import (
     adicionar_anotacao,
+    alternar_favorito,
     atualizar_anotacao,
     buscar_anotacao,
     load_data,
@@ -9,7 +10,12 @@ from utils import (
 def index():
     note_template = load_template('components/note.html')
     notes_li = [
-        note_template.format(title=dados['titulo'], details=dados['detalhes'], id=dados['id'])
+        note_template.format(
+            title=dados['titulo'],
+            details=dados['detalhes'],
+            id=dados['id'],
+            favorite_icon='★' if dados['favorite'] else '☆',
+        )
         for dados in load_data()
     ]
     notes = '\n'.join(notes_li)
@@ -38,3 +44,6 @@ def edit(id):
 
 def update(id, titulo, detalhes):
     atualizar_anotacao(id, titulo, detalhes)
+
+def favorite(id):
+    alternar_favorito(id)

@@ -6,14 +6,17 @@ def load_data():
     conexao = sqlite3.connect("banco.db")
     cursor = conexao.cursor()
 
-    cursor.execute("SELECT title, content, id FROM note")
+    cursor.execute(
+        "SELECT title, content, id, favorite FROM note "
+        "ORDER BY favorite DESC, id ASC"
+    )
     notes = cursor.fetchall()
 
     conexao.close()
 
     return [
-        {"titulo": title, "detalhes": content, "id":id}
-        for title, content, id in notes
+        {"titulo": title, "detalhes": content, "id": id, "favorite": favorite}
+        for title, content, id, favorite in notes
     ]
 
 def load_template(filename):
@@ -69,6 +72,22 @@ def atualizar_anotacao(id, titulo, detalhes):
     conexao.commit()
     conexao.close()
 
+def alternar_favorito(id):
+    criar_tabela()
+
+    conexao = sqlite3.connect("banco.db")
+    cursor = conexao.cursor()
+
+    cursor.execute(
+        "UPDATE note "
+        "SET favorite = CASE WHEN favorite = 1 THEN 0 ELSE 1 END "
+        "WHERE id = ?",
+        (id,)
+    )
+
+    conexao.commit()
+    conexao.close()
+
 def criar_tabela():
     conexao = sqlite3.connect("banco.db")
     cursor = conexao.cursor()
@@ -77,9 +96,18 @@ def criar_tabela():
     CREATE TABLE IF NOT EXISTS note (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         title TEXT NOT NULL,
-        content TEXT NOT NULL
+        content TEXT NOT NULL,
+        favorite INTEGER NOT NULL DEFAULT 0
     )
 """)
+
+    cursor.execute("PRAGMA table_info(note)")
+    columns = [column[1] for column in cursor.fetchall()]
+    if "favorite" not in columns:
+        cursor.execute(
+            "ALTER TABLE note ADD COLUMN favorite INTEGER NOT NULL DEFAULT 0"
+        )
+
     conexao.commit()
     conexao.close()
 

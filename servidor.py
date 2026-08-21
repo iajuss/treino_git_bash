@@ -50,6 +50,11 @@ def update():
     views.update(id, titulo, detalhes)
     return redirect('/')
 
+@app.route('/favorite/<int:id>', methods=['GET'])
+def favorite(id):
+    views.favorite(id)
+    return redirect('/')
+
 
     
 
