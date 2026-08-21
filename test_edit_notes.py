@@ -65,6 +65,7 @@ class EditNotesTest(unittest.TestCase):
         self.assertIn('name="detalhes" value="Detalhes originais"', page)
         self.assertIn('value="Salvar"', page)
         self.assertIn('>Cancelar<', page)
+        self.assertIn('name="edit_cancel"', page)
 
     def test_post_update_persists_changes_and_redirects_home(self):
         response = self.client.post(
