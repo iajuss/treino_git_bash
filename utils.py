@@ -38,6 +38,37 @@ def adicionar_anotacao(anotacao):
     conexao.commit()
     conexao.close()
 
+def buscar_anotacao(id):
+    criar_tabela()
+
+    conexao = sqlite3.connect("banco.db")
+    cursor = conexao.cursor()
+
+    cursor.execute("SELECT id, title, content FROM note WHERE id = ?", (id,))
+    note = cursor.fetchone()
+
+    conexao.close()
+
+    if note is None:
+        return None
+
+    id, title, content = note
+    return {"id": id, "titulo": title, "detalhes": content}
+
+def atualizar_anotacao(id, titulo, detalhes):
+    criar_tabela()
+
+    conexao = sqlite3.connect("banco.db")
+    cursor = conexao.cursor()
+
+    cursor.execute(
+        "UPDATE note SET title = ?, content = ? WHERE id = ?",
+        (titulo, detalhes, id)
+    )
+
+    conexao.commit()
+    conexao.close()
+
 def criar_tabela():
     conexao = sqlite3.connect("banco.db")
     cursor = conexao.cursor()

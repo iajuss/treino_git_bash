@@ -33,6 +33,23 @@ def delete(id):
     cursor.close()
     return redirect('/')
 
+@app.route('/update/<int:id>', methods=['GET'])
+def edit(id):
+    page = views.edit(id)
+    if page is None:
+        return redirect('/')
+
+    return render_template_string(page)
+
+@app.route('/update', methods=['POST'])
+def update():
+    id = request.form.get('id', type=int)
+    titulo = request.form.get('titulo')
+    detalhes = request.form.get('detalhes')
+
+    views.update(id, titulo, detalhes)
+    return redirect('/')
+
 
     
 
